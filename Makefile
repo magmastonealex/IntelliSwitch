@@ -122,6 +122,11 @@ esrec: $(PRG)_eeprom.srec
 	$(OBJCOPY) -j .eeprom --change-section-lma .eeprom=0 -O binary $< $@ \
 	|| { echo empty $@ not generated; exit 0; }
 
+
+flash:	all
+	sudo avrdude -p t84 -P usb -c avrispmkii -e -U lfuse:w:0xe2:m -B 10
+	sudo avrdude -p t84 -P usb -c avrispmkii -e -U flash:w:main.hex -B 1
+	
 # Every thing below here is used by avr-libc's build system and can be ignored
 # by the casual user.
 
@@ -142,4 +147,5 @@ pdf: $(PRG).pdf
 
 %.png: %.fig
 	$(FIG2DEV) -L png $< $@
+
 

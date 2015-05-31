@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+	<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- jsPlumb -->
+	<script src="dom.jsPlumb-1.7.5-min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<style>
+		.component{
+			background-color: grey;
+			width: 90px;
+			height: 90px;
+			position:absolute;
+		}
+		._jsPlumb_drag_select * {
+ 		   -webkit-touch-callout: none;
+ 		   -webkit-user-select: none;
+ 		   -khtml-user-select: none;
+ 		   -moz-user-select: none;
+ 		   -ms-user-select: none;
+ 		   user-select: none;    
+		}    
+	</style>
+	</head>
+
+
+	<body style="width:1080px; height:1000px">
+
+	<div id="hello" class="component"> </div>
+	<div id="hello3" class="component"> </div>
+<div id="hello1" class="component"> </div>
+<div id="hello2" class="component"> </div>
+	<script>
+
+
+	jsPlumb.ready(function() {
+		firstInstance = jsPlumb.getInstance();
+		firstInstance.importDefaults({
+		  Connector : [ "Bezier", { curviness: 150 } ],
+		  Anchors : [ "RightCenter" ]
+		});
+		//great, combining jQuery and normal JS...
+
+		//firstInstance.connect({
+		//  source:"element1", 
+		//  target:"element2", 
+		//  scope:"someScope" 
+		//});
+
+	//jsPlumb.addEndpoint("someElement", {
+	//  endpoint:"Dot",
+	//  anchor:[ "RightMiddle", { shape:"Circle" } ]
+	//});
+	
+
+firstInstance.addEndpoint("hello",{anchor:'Right'},{ isSource:true, isTarget:false, maxConnections:40});
+firstInstance.addEndpoint("hello3",{anchor:'Right'},{ isSource:true, isTarget:false, maxConnections:40});
+firstInstance.addEndpoint("hello1",{anchor:'BottomLeft'},{ isSource:false, isTarget:true, maxConnections:1});
+firstInstance.addEndpoint("hello1",{anchor:'TopLeft'},{ isSource:false, isTarget:true, maxConnections:1});
+firstInstance.addEndpoint("hello1",{anchor:'Right'},{ isSource:true, isTarget:false, maxConnections:40});
+firstInstance.addEndpoint("hello2",{anchor:'Left'},{ isSource:false, isTarget:true, maxConnections:1});
+		var els = document.querySelectorAll(".component");
+		firstInstance.draggable(els)
+	});
+
+function gatherList(){
+	//Iterate over all of our manipulators ( hello1), and find their inputs and outputs. Connecting manupulators to manipulators doesn't work.
+}
+	</script>
+	</body>
+</html>
