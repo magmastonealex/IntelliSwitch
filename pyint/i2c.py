@@ -29,5 +29,5 @@ class I2CDevice:
 
 
 if __name__ == "__main__": # Do some quick checks.
-	test=I2CDevice(0x35)
+	test=I2CDevice(0x34)
 	print test.inputs()

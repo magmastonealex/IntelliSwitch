@@ -2,6 +2,7 @@
 <html>
 	<head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 	<!-- jsPlumb -->
 	<script src="dom.jsPlumb-1.7.5-min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -11,7 +12,11 @@
 			width: 90px;
 			height: 90px;
 			position:absolute;
+			text-align: center;
+			line-height: 90px;
+			font-family: 'Roboto', sans-serif; 
 		}
+
 		._jsPlumb_drag_select * {
  		   -webkit-touch-callout: none;
  		   -webkit-user-select: none;
@@ -26,10 +31,22 @@
 
 	<body style="width:1080px; height:1000px">
 
-	<div id="hello" class="component"> </div>
-	<div id="hello3" class="component"> </div>
-<div id="hello1" class="component"> </div>
-<div id="hello2" class="component"> </div>
+	<div id="hello" spec="i:35:1" class="component source">Switch 1</div>
+	<div id="hello3" spec="i:35:1" class="component source">Switch 2</div>
+	<div id="notherin" spec="w:1" class="component source">Switch 3</div>
+
+
+	<div id="hello2"  spec="i:34:0" class="component output">LivingRoom</div>
+
+
+	<div id="finalout"  spec="i:36:1" class="component output">FrontLights</div>
+
+
+
+	<div id="hello1" function="threeway" class="component module">THREE</div>
+
+	<div id="hellonew" function="AND" class="component module">AND</div>
+
 	<script>
 
 
@@ -51,20 +68,65 @@
 	//  endpoint:"Dot",
 	//  anchor:[ "RightMiddle", { shape:"Circle" } ]
 	//});
-	
 
-firstInstance.addEndpoint("hello",{anchor:'Right'},{ isSource:true, isTarget:false, maxConnections:40});
-firstInstance.addEndpoint("hello3",{anchor:'Right'},{ isSource:true, isTarget:false, maxConnections:40});
-firstInstance.addEndpoint("hello1",{anchor:'BottomLeft'},{ isSource:false, isTarget:true, maxConnections:1});
-firstInstance.addEndpoint("hello1",{anchor:'TopLeft'},{ isSource:false, isTarget:true, maxConnections:1});
-firstInstance.addEndpoint("hello1",{anchor:'Right'},{ isSource:true, isTarget:false, maxConnections:40});
-firstInstance.addEndpoint("hello2",{anchor:'Left'},{ isSource:false, isTarget:true, maxConnections:1});
+$(".source").each(function(){initSource($(this).attr("id"))});
+$(".output").each(function(){initOutput($(this).attr("id"))});
+$(".module").each(function(){initThreeway($(this).attr("id"))});
+
+
+
 		var els = document.querySelectorAll(".component");
 		firstInstance.draggable(els)
 	});
 
+function initThreeway(item){
+firstInstance.addEndpoint(item,{anchor:'BottomLeft'},{ isSource:false, isTarget:true, maxConnections:1});
+firstInstance.addEndpoint(item,{anchor:'TopLeft'},{ isSource:false, isTarget:true, maxConnections:1});
+firstInstance.addEndpoint(item,{anchor:'Right'},{ isSource:true, isTarget:false, maxConnections:40});
+}
+
+function initSource(item){
+firstInstance.addEndpoint(item,{anchor:'Right'},{ isSource:true, isTarget:false, maxConnections:40});
+firstInstance.addEndpoint(item,{anchor:'Right'},{ isSource:true, isTarget:false, maxConnections:40});
+}
+
+function initOutput(item){
+firstInstance.addEndpoint(item,{anchor:'Left'},{ isSource:false, isTarget:true, maxConnections:1});
+}
+
+
 function gatherList(){
 	//Iterate over all of our manipulators ( hello1), and find their inputs and outputs. Connecting manupulators to manipulators doesn't work.
+
+	window.descriptor=[];
+	$(".module").each(function(){
+
+	inputs = firstInstance.getConnections({ target:$(this).attr("id") });
+	var inputs_spec=[];
+	for (var i = inputs.length - 1; i >= 0; i--) {
+		inputs_spec.push($(inputs[i].source).attr("spec"));
+	};
+	outputs= firstInstance.getConnections({ source:$(this).attr("id") });
+	var outputs_spec=[];
+	for (var i = outputs.length - 1; i >= 0; i--) {
+		outputs_spec.push($(outputs[i].target).attr("spec"));
+	};
+	if(inputs_spec.length < 1 && outputs_spec < 1){
+		console.log("Empty Widget!");
+	}else{
+		window.descriptor.push({'function':$("#hello1").attr("function"), 'inputs':inputs_spec,'outputs':outputs_spec});
+	}
+	});
+//Check for outputs connected directly to inputs. (Implemeted as another function though)
+	$(".output").each(function(){
+		ins=firstInstance.getConnections({target:$(this).attr("id")});
+		for (var i = ins.length - 1; i >= 0; i--) {
+			if($(ins[i].source).hasClass("source")){
+				window.descriptor.push({'function':'direct','inputs':[$(ins[i].source).attr("spec")],'outputs':[$(this).attr("spec")]});
+			}
+
+		};
+	});
 }
 	</script>
 	</body>

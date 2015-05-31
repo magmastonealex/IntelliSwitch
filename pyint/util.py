@@ -20,4 +20,5 @@ if __name__ == "__main__": # Do some quick checks.
 	test=InputManager()
 	test.addDevice(0x36)
 	test.addDevice(0x35)
+	test.addDevice(0x34)
 	print test.getInputs()
