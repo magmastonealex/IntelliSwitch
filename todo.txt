@@ -1,0 +1,14 @@
+- Separate out web/python. Python will run as an independant daemon, and poll a DB (Redis?) for information. This removes some of the state-keeping neccessity that's a mess in Python.
+- Redo build system for AVR properly - usitwislave doesn't belong to us, and we shouldn't keep it here.
+- Software update/tagging mechanisim. AVRs have eeproms, let's use 'em.
+	- Designate type of device, software version.
+- Encryption of some sort betweeen outlets/master - not using wireless, doesn't matter.
+
+- Wireless is messy. Can we do something at zero-crossing like powerline ethernet? Would bring cost down significantly.
+	- What if user has multiple circuits?
+	- Carrier wave & modulation. 
+
+- Analog values
+- Date/Time handler
+- Digital outputs
+	- Pushbullet at least!

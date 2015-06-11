@@ -2,7 +2,7 @@ from Adafruit_I2C import Adafruit_I2C
 import time
 
 #signal source specifier: i:34:0 or i:34:1
-
+# On the bus, this really needs to be an abstract class somewhere considering it's use.
 class I2CDevice:
 	statusChecker=0x00 # keep a record of the data that's being sent
 
