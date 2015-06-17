@@ -12,10 +12,10 @@ class I2CDevice:
 	def inputs(self): # takes nothing, returns a list of input statuses.
 		dat=self.device.readU8(self.statusChecker)
 		toret=[]
-		toret.append( 1 if(dat & (1<<0)) else 0)
+		#toret.append( 1 if(dat & (1<<0)) else 0)
 		toret.append( 1 if(dat & (1<<1)) else 0)
-		toret.append( 1 if(dat & (1<<2)) else 0)
-		toret.append( 1 if(dat & (1<<3)) else 0)
+		#toret.append( 1 if(dat & (1<<2)) else 0)
+		#toret.append( 1 if(dat & (1<<3)) else 0)
 		return toret
 	def setOutput(self,outputPin,outputState): # takes a pin, and a state, and sets it.
 		if outputState == 1:

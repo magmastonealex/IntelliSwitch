@@ -12,7 +12,7 @@ class InputManager:
 		if deviceI[0]=="i":
 			self.devices[deviceI].append(I2CDevice(int(deviceI.split(":")[1],16)))
 		elif deviceI[0]=="w":
-			self.devices[deviceI].append(WebDevice(deviceI.split(":")[1]))
+			self.devices[deviceI].append(WebDevice(deviceIdent))
 		elif deviceI[0]=="p":
 			self.devices[deviceI].append(STDODevice(deviceI.split(":")[1]))
 		elif deviceI[0]=="t":
@@ -28,7 +28,7 @@ class InputManager:
 
 if __name__ == "__main__": # Do some quick checks.
 	test=InputManager()
-	test.addDevice(0x36)
-	test.addDevice(0x35)
-	test.addDevice(0x34)
+	test.addDevice("i:36-1")
+	test.addDevice("i:35-1")
+	test.addDevice("i:34-1")
 	print test.getInputs()

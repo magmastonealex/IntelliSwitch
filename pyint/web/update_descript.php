@@ -5,6 +5,6 @@ Predis\Autoloader::register();
 
 $client = new Predis\Client();
 
-$client->set($_POST["id"], $_POST["state"]);
+$client->set("descriptor", $_POST["descrip"]);
 
 ?>

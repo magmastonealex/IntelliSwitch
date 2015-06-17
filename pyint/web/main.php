@@ -1,4 +1,3 @@
-<!doctype html>
 <html>
 	<head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -68,35 +67,36 @@ $des=$client->get("descriptor");
 
 
 ?>
-	<div id="hello" spec="i:35:1" class="component source"><p class="txt"><?php echo $client->get("i:35:1:name");?></p><br><button  type="button" class="edit btn btn-info btn-sm">edit</button></div>
-	<div id="hello3" spec="i:33:1" class="component source"><p class="txt"><?php echo $client->get("i:33:1:name");?></p><br><button  type="button" class="edit btn btn-info btn-sm">edit</button></div>
-	<div id="hello2"  spec="i:34:0" class="component output"><p class="txt"><?php echo $client->get("i:34:1:name");?></p><br><button  type="button" class="edit btn btn-info btn-sm">edit</button></div>
-	<div id="finalout"  spec="i:36:1" class="component output"><p class="txt"><?php echo $client->get("i:36:1:name");?></p><br><button  type="button" class="edit btn btn-info btn-sm">edit</button></div>
-	
-<!-- Need to set up functional blocks here incl. IDs, coords-->
-<?
+	<div id="hello" spec="i:35-1" style="<?php echo $client->get("i:35-1:pos")?>" class="component source"><p class="txt"><?php echo $client->get("i:35-1:name");?></p><br><button  type="button" class="edit btn btn-info btn-sm">edit</button></div>
+	<div id="hello3" spec="i:36-1" style="<?php echo $client->get("i:36-1:pos")?>" class="component source"><p class="txt"><?php echo $client->get("i:36-1:name");?></p><br><button  type="button" class="edit btn btn-info btn-sm">edit</button></div>
+
+	<div id="hello2"  spec="i:34-0" style="<?php echo $client->get("i:34-0:pos")?>" class="component output"><p class="txt"><?php echo $client->get("i:34-0:name");?></p><br><button  type="button" class="edit btn btn-info btn-sm">edit</button></div>
+	<div id="finalout"  spec="i:35-0" style="<?php echo $client->get("i:36-0:pos")?>" class="component output"><p class="txt"><?php echo $client->get("i:36-0:name");?></p><br><button  type="button" class="edit btn btn-info btn-sm">edit</button></div>
+<?php
 
 $desc=json_decode($des,TRUE);
 $added=array();
 foreach ($desc as $item) {
-	if($item["function"]=="direct"){
-		foreach ($item["function"]["inputs"] as $key) {
+	if($item["function"]!="direct"){
+		?>
+		<div id="<?php echo $item["id"]?>"  style="<?php echo $client->get($item["id"].":pos")?>" function="<?php echo $item["function"] ?>" class="component module"><?php echo $item["function"]?></div>
+	<?php
+	}
+		foreach ($item["inputs"] as $key) {
 			if(!in_array($key, $added)){
-				if($key[0]=="w"){
-					?>
-					<div id="notherin" spec="<?php echo $key ?>" class="component source"><p class="txt"><?php echo $client->get($key.":name");?></p><br><button  type="button" class="edit btn btn-info btn-sm">edit</button><button type="button" class="wbButton btn btn-info btn-sm">del</button></div>
-					<?php
-				}else if ($key[0]=="t"){
-					?>
-					<div id="<?php echo $key?>" spec="t:<?php echo $key?>" class="component source "><p>Temperature</p><p class="txt"><?php echo $client->get($key.":name")?></p><button type="button" class="edit btn btn-info btn-sm">edit</button>
-					<?php
-				}
+				if($key[0]=="w"){?>
+					
+					<div id="wb-<?php echo $key?>" style="<?php echo $client->get($key.":pos")?>"  spec="<?php echo $key ?>" class="component source"><p class="txt"><?php echo $client->get($key.":name");?></p><br><button  type="button" class="edit btn btn-info btn-sm">edit</button><button type="button" class="wbButton btn btn-info btn-sm">del</button></div>
+					
+				<?php }else if ($key[0]=="t"){?>
+					
+					<div id="temp-<?php echo $key?>"  style="<?php echo $client->get($key.":pos")?>" spec="<?php echo  $key?>" class="component source "><p>Temperature</p><p class="txt"><?php echo $client->get($key.":name")?></p><button type="button" class="edit btn btn-info btn-sm">edit</button></div>
+					
+				<?php }
 				array_push($added, $key);
 			}
 		}
-	}else{
 
-	}
 }
 ?>
 
@@ -152,7 +152,7 @@ foreach ($desc as $item) {
 			setClickEdits();	
 		});
 		$("#addWebButton").click(function(){
-			id="temp-"+Math.floor((Math.random() * 40000) + 0)
+			id="wb-"+Math.floor((Math.random() * 40000) + 0)
 			$("body").append('<div id="'+id+'" spec="w:'+id+'" class="component source"><p class="txt">New Button</p><button type="button" class="edit btn btn-info btn-sm">edit</button><button type="button" class="wbButton btn btn-info btn-sm">del</button></div></div>');
 			x=$("#"+id);
 			x.css("left",Math.floor((Math.random() * 400) + 40));
@@ -181,7 +181,7 @@ foreach ($desc as $item) {
                     	}else{
                     		nme=$(event.el).attr("spec");
                     	}
-                    	$.post("/switch/update_pos.php",{"id":nme,"data":lft+","+tp});
+                    	$.post("/switch/update_pos.php",{"id":nme,"data":"left:"+lft+"; top:"+tp+";"});
                         
                     	}
                     }
@@ -203,11 +203,12 @@ for (var i = 0; i < window.conns.length; i++) {
 	if(ccon["function"]=="direct"){
 		inid=$("[spec='"+ccon["inputs"][0]+"']").attr("id");
 		outid=$("[spec='"+ccon["outputs"][0]+"']").attr("id");
+		console.log("direct: "+inid+" "+outid);
 		firstInstance.connect({source:window.eps[inid]["outs"][0], target:window.eps[outid]["ins"][0]});
 	}else{
 		in1=$("[spec='"+ccon["inputs"][0]+"']").attr("id");
 		in2=$("[spec='"+ccon["inputs"][1]+"']").attr("id");
-		device=$("#"+ccon["id"]).attr("id");
+		device=ccon["id"];
 		out1=$("[spec='"+ccon["outputs"][0]+"']").attr("id");
 		firstInstance.connect({source:window.eps[in1]["outs"][0], target:window.eps[device]["ins"][0]});
 		firstInstance.connect({source:window.eps[in2]["outs"][0], target:window.eps[device]["ins"][1]});
@@ -235,6 +236,7 @@ function setClickEdits(){
 				x=$(this).parent().children(".editinput").val();
 				$(this).parent().children(".editinput").remove();
 				$(this).parent().append("<p class='txt'>"+x+"</p>");
+				console.log({"id":$(this).parent().attr("spec"),"data":x});
 				$.post("/switch/update_data.php",{"id":$(this).parent().attr("spec"),"data":x})
 				$(this).text("Edit");
 			}
@@ -257,6 +259,7 @@ window.eps[item]["outs"]=[x3];
 }
 
 function initSource(item){
+
 x1=firstInstance.addEndpoint(item,{anchor:'Right'},{ isSource:true, isTarget:false, maxConnections:40});
 window.eps[item]={};
 window.eps[item]["outs"]=[x1];
